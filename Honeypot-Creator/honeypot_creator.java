@@ -21,6 +21,10 @@
  
 // import input -and output operations 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /* Honeypot-Creator: Transforms php-based web applications into a high-interaction web-based honeypot
@@ -34,7 +38,22 @@ public class honeypot_creator {
     public static int counter = 0;
     
     // file with code to insert at beginning of each filtered file
-    private static String insertionFile = "insertionfile.txt";
+    // (HIHAT-nx: the file ships as "insertionFile.txt"; the old lower-case name is still accepted)
+    private static String insertionFile = new File( "insertionFile.txt" ).exists() ? "insertionFile.txt" : "insertionfile.txt";
+
+    // HIHAT-nx: number of files skipped (already transformed, or code that cannot be prefixed)
+    public static int skipped = 0;
+
+    /* HIHAT-nx: current PHP requires declare(strict_types=1) and a namespace statement to come first in a file.
+       For such files the logging code is inserted directly after these statements, without its own
+       opening and closing PHP tags. Byte-preserving (ISO-8859-1); comments before the statements are allowed. */
+    private static final String COMMENTS = "(?:\\s+|/\\*.*?\\*/|//[^\\n]*|#(?!\\[)[^\\n]*)*";
+    private static final Pattern LEADING_STATEMENTS = Pattern.compile(
+        "\\A(?:\\xEF\\xBB\\xBF)?<\\?php" + COMMENTS
+        + "(?:(declare\\s*\\([^)]*\\)\\s*;)" + COMMENTS + ")?"
+        + "(?:(namespace\\s+[A-Za-z0-9_\\\\]+\\s*;)" + COMMENTS + ")?",
+        Pattern.DOTALL );
+    private static final Pattern BRACED_NAMESPACE = Pattern.compile( "^\\s*namespace(\\s+[A-Za-z0-9_\\\\]+)?\\s*\\{", Pattern.MULTILINE );
    
    
     // empty constructor
@@ -78,45 +97,56 @@ public class honeypot_creator {
    public static void listContent( String fileName ) {
        counter++;
        File sourcefile = new File (fileName );
-    
-       // temporary buffer file
-       String tempFileString = "tempFileBuffer.txt";
-           
+
+       // temporary buffer file (HIHAT-nx: next to the target file, so that the final rename stays on one file system)
+       String tempFileString = sourcefile.getAbsolutePath() + ".hihat.tmp";
+
         // main part
         try {
-          BufferedInputStream in = new BufferedInputStream ( 
-                                   new FileInputStream( sourcefile.getAbsolutePath() ));
+          String insertion = new String( Files.readAllBytes( new File( insertionFile ).toPath() ), StandardCharsets.ISO_8859_1 );
+          String original  = new String( Files.readAllBytes( sourcefile.toPath() ), StandardCharsets.ISO_8859_1 );
+          String result;
+
+          if ( original.contains( "$thisModule_23cdx_" ) ) {
+              System.err.println( "Skipped (already transformed): " + fileName );
+              skipped++;
+              return;
+          }
+
+          // code outside braced namespace blocks is not allowed, so such files cannot be prefixed
+          if ( BRACED_NAMESPACE.matcher( original ).find() ) {
+              System.err.println( "Skipped (braced namespace): " + fileName );
+              skipped++;
+              return;
+          }
+
+          Matcher m = LEADING_STATEMENTS.matcher( original );
+          if ( m.lookingAt() && ( m.group( 1 ) != null || m.group( 2 ) != null ) ) {
+              // strip the opening and closing tags of the insertion and place it after declare/namespace
+              String body = insertion.replaceFirst( "\\A\\s*<\\?php", "" ).replaceFirst( "\\?>\\s*\\z", "" );
+              String nl = original.contains( "\r\n" ) ? "\r\n" : "\n";
+              result = original.substring( 0, m.end() ) + nl + body + nl + original.substring( m.end() );
+          } else {
+              // original behaviour: the insertion followed by the original data
+              result = insertion + original;
+          }
+
           DataOutputStream out =      new DataOutputStream(
                                       new BufferedOutputStream(
                                       new FileOutputStream( tempFileString )));
-          BufferedInputStream insertionIn = new BufferedInputStream ( 
-                                     new FileInputStream( new File( insertionFile).getAbsolutePath() ));
-                                                                       
-          byte[] buf = new byte[4096];    
-          int len;
-          
-          // write insertion into outputfile
-          while ((len = insertionIn.read(buf)) > 0) {
-            out.write(buf, 0, len);
-          }            
-          
-          // append original data
-          while ((len = in.read(buf)) > 0) {
-            out.write(buf, 0, len);
-          }
+          out.write( result.getBytes( StandardCharsets.ISO_8859_1 ) );
           out.close();
-          in.close();    
-           
+
           File newRenamedSourcefile = new File( sourcefile.getAbsolutePath() + "."
                         +  Math.abs(( new java.util.Random().nextInt() % 1000)) + "old" );
-          
+
           if (!sourcefile.renameTo( newRenamedSourcefile ))
-                    System.err.println( "Couldn't rename file!");      
-           
-           
+                    System.err.println( "Couldn't rename file!");
+
+
           if ( ! (new File( tempFileString )).renameTo( new File( fileName))) {
               System.err.println( "Error: Couldn't create modified File! Data stored in " + sourcefile.getAbsolutePath());
-          } else { 
+          } else {
                 if (!newRenamedSourcefile.delete())
                     System.err.println( "Error: Couldn't delete renamed Sourcefile " + newRenamedSourcefile.getAbsolutePath());
             }
@@ -124,7 +154,7 @@ public class honeypot_creator {
           System.err.println(e.toString());
         }
    }
-    
+
     /* main program  
        usage example: "java honeypot_creator /var/www/phpmyadmin/"     */ 
     public static void main(String[] args) {         
@@ -144,7 +174,9 @@ public class honeypot_creator {
                   
           listDir( new File( directory ));
           //System.out.println( new File("C:\\Dokumente und Einstellungen\\Michael Mustermann\\Eigene Dateien\\xampp\\htdocs\\" + directory));          
-          System.out.println( "\n" + counter + " files have been processed for directory " + directory );                
+          System.out.println( "\n" + counter + " files have been processed for directory " + directory );
+          if ( skipped > 0 )
+              System.out.println( skipped + " of them were skipped (see messages above)" );                
       } else 
           System.out.println( "Missing parameter: please add full directory path!" );
     }

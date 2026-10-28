@@ -272,7 +272,7 @@
               // look for IP, Attack, SELECTED IDs, ALL-Attacks                  
               } else if ( $this->mode == 1 | $this->mode == 2 | $this->mode == 5 | $this->mode == 7 ) {
                   $returnStr = "WHERE ID IN (";
-                  if ( is_array( $this->searchIdArray ) & $this->searchIdArray != NULL & (count($this->searchIdArray) > 0 ))
+                  if ( is_array( $this->searchIdArray ) & $this->searchIdArray != NULL & (hihat_count($this->searchIdArray) > 0 ))
                       foreach ( $this->searchIdArray as $key => $value )
                           $returnStr .= ($key == 0) ? (int)$value : (",".(int)$value); 
                   else
@@ -299,7 +299,7 @@
           }                 
           // sets the current array with search-results (IDs to show)
           public function setSearchIdArray( $newArray ) {
-                if ( is_array($newArray) & count( $newArray ) > 0 ) {
+                if ( is_array($newArray) & hihat_count( $newArray ) > 0 ) {
                     $this->searchIdArray = array();
                     foreach ( $newArray as $key => $val )
                         array_push( $this->searchIdArray, abs( (int)$val ) );

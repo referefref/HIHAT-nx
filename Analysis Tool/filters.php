@@ -48,7 +48,7 @@
           
       $positiveListArray = ( $whitemode ? whitelist() : blacklist() ); // black-or-whitelist array
       if ( isset( $module ) && !( $module == NULL )) {
-          $startIndex = count( $positiveListArray );
+          $startIndex = hihat_count( $positiveListArray );
                     
           $addOnArray = $whitemode ? $module->getWhiteArray() : $module->getBlackArray() ;
           $addOnArrayElements = $whitemode ? $module->getWhiteElementNr() : $module->getBlackElementNr() ;
@@ -63,7 +63,7 @@
       }   
       
       foreach( $stringArray as $strkey => $strValue ) {   // check entire array           
-          for( $i = 0; $i < count( $positiveListArray ); $i++ ) {    // check for each entry in whitelist              
+          for( $i = 0; $i < hihat_count( $positiveListArray ); $i++ ) {    // check for each entry in whitelist              
               if ( $positiveListArray[ $i ][ 1 ] == true & $positiveListArray[ $i ][ 2 ] == true ) {  // strict + case sensitive
                   if ( strcmp( $strValue, $positiveListArray[ $i ][ 0 ] ) == 0 )
                           return $whitemode;                 
@@ -113,11 +113,11 @@
       }
       
       // evaluate results
-      if ( count ( $resultArr ) < 1 )
+      if ( hihat_count ( $resultArr ) < 1 )
           return -1;
       else {       
           $resultArr = array_unique( $resultArr );  //  avoid duplicate entries of detected attacks
-          while( count($resultArr) > 0 ) {
+          while( hihat_count($resultArr) > 0 ) {
               $element = array_shift( $resultArr);                                 
               $newStr = $image ? $attacks_obj->getImgVal( $element ) : 
                                  $attacks_obj->getStrVal( $element );

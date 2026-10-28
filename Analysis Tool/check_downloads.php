@@ -36,7 +36,7 @@
 
     // checkall = true   checks all entries, even if they have been checked before
     // needs to be defined before, in calling php-file
-    $checkall = (defined(CHECKALL) ? ""  : "WHERE download_checked <> 1" );
+    $checkall = (defined('CHECKALL') ? ""  : "WHERE download_checked <> 1" );
 
     // read config files
     include_once "inc/config.php"; 
@@ -97,7 +97,7 @@
         
       // insert into table, mark entries that have already been processed   
       $idString = "";
-      if ( is_array( $processedIdArray ) &&  count($processedIdArray) > 0 ) {
+      if ( is_array( $processedIdArray ) &&  hihat_count($processedIdArray) > 0 ) {
                 foreach ( $processedIdArray as $key => $value )
                     $idString .= ($key == 0) ? (int)$value : (",".(int)$value);
                       

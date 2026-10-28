@@ -240,7 +240,7 @@
         }
         // returns minimum key 
         public function getMinimumKey() {
-            if ( count($this->allIPandDataArray) > 0 )
+            if ( hihat_count($this->allIPandDataArray) > 0 )
                 return min( array_keys( $this->allIPandDataArray ));
             else
                 return 0;

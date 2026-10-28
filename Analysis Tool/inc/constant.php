@@ -23,6 +23,9 @@
 // constant.php
 // configure HIHAT in this file
 
+    // HIHAT-nx: mysql_*, ereg and split replacements for PHP 7 and later
+    require_once dirname(__FILE__) . '/mysql_compat.php';
+
     define('MYSQL_HOST', 'localhost');                  // host with sql-database
     define('MYSQL_USER', 'user');                       // username for sql-database
     define('MYSQL_PASS', 'pass');                       // passowrd for sql-database    

@@ -544,7 +544,7 @@
           <tr><td style=\"width:".$leftMed."px;\" class=\"left_stat\">";       
     echo "Referrer was obstructed: </td><td class=\"right_stat\">".$valueRef."  </td><td class=\"percent_stat\"> [".round($valueRef/$totalHits*100, $accuracy)."%] </td></tr>\n <tr><td class=\"left_stat\">";
     echo "Proxy detected: </td><td class=\"right_stat\">".$proxyCounter."  </td><td class=\"percent_stat\"> [".round($proxyCounter/$totalHits*100, $accuracy)."%] </td></tr>\n<tr><td class=\"left_stat\">";                     
-    echo "Number of distinct source IPs: </td><td class=\"right_stat\">".count( $ipTypes )."</td></tr></table>";
+    echo "Number of distinct source IPs: </td><td class=\"right_stat\">".hihat_count( $ipTypes )."</td></tr></table>";
       
     
     echo '<br>'.$startTbl;
@@ -555,7 +555,7 @@
   
     $maxReferrer = 15;  // most popular referrer    
     echo "\n<br><br><b>Most popular http-referrer:</b><br>";
-    if ( count($referrerTypes) > 0 ) {
+    if ( hihat_count($referrerTypes) > 0 ) {
         echo '<table border="0"><tr><td style="width:'.$useragent_width.'px;" class="left_stat">';
         arsort($referrerTypes);
         $foreachCounter = 0;
@@ -563,7 +563,7 @@
             $foreachCounter++;
             if ($foreachCounter <= $maxReferrer )
                 echo wordwrap( htmlentities(urldecode($key)), $wwrapReferrer, "<br>\n", true)." </td><td class=\"right_stat\">".$value."</td><td class=\"percent_stat\">[".round($value/$knownEngineInReferrer*100, $accuracy)."%]  </td>";
-            if ($foreachCounter < $maxReferrer && count($referrerTypes) > $foreachCounter )
+            if ($foreachCounter < $maxReferrer && hihat_count($referrerTypes) > $foreachCounter )
                 echo "</tr>\n<tr><td style=\"width:".$leftMed."px;\" class=\"left_stat\">";          
         }
     } 
@@ -573,7 +573,7 @@
     $maxReferrerEngines = 25;  /* nr. most popular search engines, if value=lenth of array "getKnownSearchEngines" in
                                   browserCheck.php ALL engines are displayed                                      */   
     echo "\n<br><br><b>Search engines detected in http-referrer:</b><br>";
-    if ( count($referrerEngines) > 0 ) {
+    if ( hihat_count($referrerEngines) > 0 ) {
         echo $startTbl;
         arsort($referrerEngines);
         $foreachCounter = 0;
@@ -583,7 +583,7 @@
                 $key = substr($key, 0, strlen( $key) - 1 );
             if ($foreachCounter <= $maxReferrerEngines )
                 echo htmlentities($key)." </td><td class=\"right_stat\">".$value." Hits </td><td class=\"percent_stat\">[".round($value/$knownEngineInReferrer*100, $accuracy)."%]  </td>";
-            if ($foreachCounter < $maxReferrerEngines && count($referrerEngines) > $foreachCounter )
+            if ($foreachCounter < $maxReferrerEngines && hihat_count($referrerEngines) > $foreachCounter )
                 echo "</tr>\n<tr><td style=\"width:".$leftMed."px;\" class=\"left_stat\">";          
         }
     } 
@@ -591,7 +591,7 @@
   
     $files2show = 15;  // the three most popular targets
     echo "\n<br><br><b>Most often accessed files:</b><br>";
-    if ( count($targetFileTypes) > 0 ) {
+    if ( hihat_count($targetFileTypes) > 0 ) {
         echo $startTbl;
         arsort($targetFileTypes);
         $foreachCounter = 0;
@@ -599,7 +599,7 @@
             $foreachCounter++;
             if ($foreachCounter <= $files2show )
                 echo $key." </td><td class=\"right_stat\">".$value." Hits </td><td class=\"percent_stat\">[".round($value/$totalHits*100, $accuracy)."%]  </td>";
-            if ($foreachCounter < $files2show && count($targetFileTypes) > $foreachCounter )
+            if ($foreachCounter < $files2show && hihat_count($targetFileTypes) > $foreachCounter )
                 echo "</tr>\n<tr><td style=\"width:".$leftMed."px;\" class=\"left_stat\">";          
         }        
     } 
@@ -608,7 +608,7 @@
       
     $upToLoudest = 15;  // the three most loudest ips    
     echo '<p class="headline">Loudest IPs:</p>';    
-    if ( count($ipTypes) > 0 ) {
+    if ( hihat_count($ipTypes) > 0 ) {
         echo $startTbl;
         arsort($ipTypes);
         $foreachCounter = 0;
@@ -616,7 +616,7 @@
             $foreachCounter++;
             if ($foreachCounter <= $upToLoudest )
                 echo htmlentities($key)." </td><td class=\"right_stat\">".$value." Hits </td><td class=\"percent_stat\">[".round($value/$totalHits*100, $accuracy)."%]  </td>";
-            if ($foreachCounter < $files2show && count($ipTypes) > $foreachCounter )
+            if ($foreachCounter < $files2show && hihat_count($ipTypes) > $foreachCounter )
                 echo "</tr>\n<tr><td style=\"width:".$leftMed."px;\" class=\"left_stat\">";          
         }
     } 
@@ -624,14 +624,14 @@
     
     
     echo '<p class="headline">Hits per module:</p>';
-    if ( count($hitsPerModule) > 0 ) {
+    if ( hihat_count($hitsPerModule) > 0 ) {
         echo $startTbl;
         arsort($hitsPerModule);  
         $foreachCounter = 0;  
         foreach($hitsPerModule AS $key => $value ) {
             $foreachCounter++;
             echo $key." </td><td class=\"right_stat\">".$value." </td><td class=\"percent_stat\"> [".round($value/$totalHits*100, $accuracy)."%]  </td>";
-            if ( count($hitsPerModule) > $foreachCounter )
+            if ( hihat_count($hitsPerModule) > $foreachCounter )
                 echo "</tr>\n<tr><td style=\"width:".$leftMed."px;\" class=\"left_stat\">";          
         }            
     } 
@@ -641,16 +641,16 @@
     echo '<p class="headline">User Agents: <font size="-1">(excluding Web Spiders)</font></p>';
     
     echo '<table border="0"><tr><td style="width:'.$leftMed.'px;" class="left_stat">';
-    echo "Number of distinct user agents: </td><td class=\"right_stat\">".count($browserTypes)."</td></tr></table><br>";
+    echo "Number of distinct user agents: </td><td class=\"right_stat\">".hihat_count($browserTypes)."</td></tr></table><br>";
     
-    if ( count($browserTypes) > 0 ) {
+    if ( hihat_count($browserTypes) > 0 ) {
         echo '<table border="0"><tr><td style="width:'.$useragent_width.'px;" class="left_stat">';
         arsort($browserTypes);
         $foreachCounter = 0;  
         foreach($browserTypes AS $key => $value ) {
             $foreachCounter++;
             echo htmlentities($key)." </td><td class=\"right_stat\">".$value." Hits </td><td class=\"percent_stat\">[".round($value/$totalHits*100, $accuracy)."%]  </td>";
-            if ( count($browserTypes) > $foreachCounter )
+            if ( hihat_count($browserTypes) > $foreachCounter )
                 echo "</tr>\n<tr><td style=\"width:".$leftMed."px;\" class=\"left_stat\">";          
         }
     }
@@ -660,9 +660,9 @@
     echo '<br><p class="headline">Web Spiders:</p>';
     echo '<table border="0"><tr><td style="width:'.$leftMed.'px;" class="left_stat">';
     echo "Total Web Spiders: </td><td class=\"right_stat\">".$totalSpiders." </td><td class=\"percent_stat\">[".round($totalSpiders/$totalHits*100, $accuracy)."%]  </td></tr>\n<tr><td class=\"left_stat\">";      
-    echo "Number of distinct web spiders: </td><td class=\"right_stat\">".count($spiderTypes)." </td></tr></table>\n<br>";
+    echo "Number of distinct web spiders: </td><td class=\"right_stat\">".hihat_count($spiderTypes)." </td></tr></table>\n<br>";
       
-    if ( count($spiderTypes) > 0 ) {
+    if ( hihat_count($spiderTypes) > 0 ) {
         echo '<table border="0"><tr><th class="left_stat">Spider Types</th><th colspan="2"></th></tr>
                                 <tr><td style="width:'.$useragent_width.'px;" class="left_stat">';
         arsort($spiderTypes);    
@@ -670,7 +670,7 @@
         foreach($spiderTypes AS $key => $value ) {
             $foreachCounter++;
             echo htmlentities($key)." </td><td class=\"right_stat\">".$value." Hits </td><td class=\"percent_stat\">[".round($value/$totalSpiders*100, $accuracy)."%]  </td>\n";
-            if ( count($spiderTypes) > $foreachCounter )
+            if ( hihat_count($spiderTypes) > $foreachCounter )
                 echo "</tr>\n<tr><td class=\"left_stat\">";          
         }
     }    
@@ -681,19 +681,19 @@
         
     $totalAttacks = array_unique( $totalAttacks );
     echo '<table border="0"><tr><td style="width:'.$leftMed.'px;" class="left_stat">';
-    echo "Total number of detected attacks: </td><td class=\"right_stat\">".count(  $totalAttacks )." </td><td class=\"percent_stat\">[".round(count(  $totalAttacks )/$totalHits*100, $accuracy)."%]  </td></tr>\n<tr><td class=\"left_stat\">";
-    echo "Number of distinct attack types:  </td><td class=\"right_stat\">".count($attackTypes)."</td></tr></table>\n";  
+    echo "Total number of detected attacks: </td><td class=\"right_stat\">".hihat_count(  $totalAttacks )." </td><td class=\"percent_stat\">[".round(hihat_count(  $totalAttacks )/$totalHits*100, $accuracy)."%]  </td></tr>\n<tr><td class=\"left_stat\">";
+    echo "Number of distinct attack types:  </td><td class=\"right_stat\">".hihat_count($attackTypes)."</td></tr></table>\n";  
     
     
     echo "\n<br><b>Attacks per module:</b> <br>";
-    if ( count($attacksPerModule) > 0 ) {
+    if ( hihat_count($attacksPerModule) > 0 ) {
         echo $startTbl; 
         arsort($attacksPerModule);   
         $foreachCounter = 0;   
         foreach($attacksPerModule AS $key => $value ) {
             $foreachCounter++;
-            echo $key." </td><td class=\"right_stat\">".$value." Hits </td><td class=\"percent_stat\">[".round($value/count( $totalAttacks )*100, $accuracy)."%]  </td>\n";
-            if ( count($attacksPerModule) > $foreachCounter )
+            echo $key." </td><td class=\"right_stat\">".$value." Hits </td><td class=\"percent_stat\">[".round($value/hihat_count( $totalAttacks )*100, $accuracy)."%]  </td>\n";
+            if ( hihat_count($attacksPerModule) > $foreachCounter )
                 echo "</tr>\n<tr><td class=\"left_stat\">";      
         }
     }
@@ -701,14 +701,14 @@
     
             
     echo "\n<br><b>Attack Types:</b> <br>";
-    if ( count($attackTypes) > 0 ) {
+    if ( hihat_count($attackTypes) > 0 ) {
         echo $startTbl;
         arsort($attackTypes);   
         $foreachCounter = 0;    
         foreach($attackTypes AS $key => $value ){
             $foreachCounter++;
-            echo $key." </td><td class=\"right_stat\">".$value." Hits </td><td class=\"percent_stat\">[".round($value/count( $totalAttacks )*100, $accuracy)."%]  </td>\n";
-            if ( count($attackTypes) > $foreachCounter )
+            echo $key." </td><td class=\"right_stat\">".$value." Hits </td><td class=\"percent_stat\">[".round($value/hihat_count( $totalAttacks )*100, $accuracy)."%]  </td>\n";
+            if ( hihat_count($attackTypes) > $foreachCounter )
                 echo "</tr>\n<tr><td class=\"left_stat\">";
         }                            
     }    
@@ -717,15 +717,15 @@
    
     $attackVarsRight2show = 20;  // the most popular patterns
     echo "\n<br><b>Most often used attack patterns:</b><br>";    
-    if ( count($attackVarsRight) > 0 ) {
+    if ( hihat_count($attackVarsRight) > 0 ) {
         echo '<table border="0"><tr><td style="width:850px;" class="left_stat">';  // TEMP: LOCAL GRAPHIC VALUE 850
         arsort($attackVarsRight);
         $foreachCounter = 0;
         foreach($attackVarsRight AS $key => $value ) {
             $foreachCounter++;
             if ($foreachCounter <= $attackVarsRight2show )
-                echo htmlentities($key)." </td><td class=\"right_stat\">".$value." Hits </td><td class=\"percent_stat\">[".round($value/count( $totalAttacks )*100, $accuracy)."%]  </td>\n";
-            if ($foreachCounter < $attackVarsRight2show && count($attackVarsRight) > $foreachCounter )
+                echo htmlentities($key)." </td><td class=\"right_stat\">".$value." Hits </td><td class=\"percent_stat\">[".round($value/hihat_count( $totalAttacks )*100, $accuracy)."%]  </td>\n";
+            if ($foreachCounter < $attackVarsRight2show && hihat_count($attackVarsRight) > $foreachCounter )
                 echo "</tr>\n<tr><td class=\"left_stat\">";         
         }                
     }         
@@ -733,7 +733,7 @@
     
     $attackVarsLeft2show = 15;   // the mostly abused vars, variables containing the previous attack patterns   
     echo "\n<br><b>Sources of these attack patterns:</b><br>";         
-    if ( count($attackVarsLeft) > 0 ) {
+    if ( hihat_count($attackVarsLeft) > 0 ) {
         echo '<table border="0"><tr><th class="left_source_at_pattern">';
         echo 'Name of file</th><th class="left_stat">Name of variable</th><th colspan="2" class="right_stat"></th</tr><tr><td class="left_stat">';
         arsort($attackVarsLeft);
@@ -741,8 +741,8 @@
         foreach($attackVarsLeft AS $key => $value ) {
             $foreachCounter++;
             if ($foreachCounter <= $attackVarsLeft2show )
-                echo $sourcesByVulnerableVars[$key]." </td><td class=\"right_stat\"> ".htmlentities($key)." </td><td class=\"right_stat\">".$value." Hits </td><td class=\"percent_stat\">[".round($value/count( $totalAttacks )*100, $accuracy)."%]  </td>\n";
-            if ($foreachCounter < $attackVarsLeft2show && count($attackVarsLeft) > $foreachCounter )
+                echo $sourcesByVulnerableVars[$key]." </td><td class=\"right_stat\"> ".htmlentities($key)." </td><td class=\"right_stat\">".$value." Hits </td><td class=\"percent_stat\">[".round($value/hihat_count( $totalAttacks )*100, $accuracy)."%]  </td>\n";
+            if ($foreachCounter < $attackVarsLeft2show && hihat_count($attackVarsLeft) > $foreachCounter )
                 echo "</tr>\n<tr><td class=\"left_stat\">";     
         }       
     }    
@@ -752,12 +752,12 @@
     
     echo "\n<br><b>Most active attacks or requests</b> (excluding bots)";
     echo $startTbl;
-    if ( count($mostActiveSingleAttack) > 0 ) {
+    if ( hihat_count($mostActiveSingleAttack) > 0 ) {
           for( $i = 0; $i < $maxActiveVal; $i++ ) {
               echo "IP: ".htmlentities($mostActiveSingleAttack[$i][2])."</td><td class=\"mostactive_stat_hits\"> [".$mostActiveSingleAttack[$i][0].
                    " Hits in a row] </td> <td class=\"mostactive_stat_lastid\">Last ID of attack: <a href='detailFramework.php?id=".(int)$mostActiveSingleAttack[$i][1]."'>"
                               .(int)$mostActiveSingleAttack[$i][1]."</a> </td><td class=\"left_stat\"> in Module \"".$mostActiveSingleAttack[$i][3]."\" </td>\n";
-              if ( ($i+1) < $maxActiveVal && (($i+1) < count($mostActiveSingleAttack)))
+              if ( ($i+1) < $maxActiveVal && (($i+1) < hihat_count($mostActiveSingleAttack)))
                   echo "</tr><tr><td class=\"left_stat\">";                              
               }                    
     } 
@@ -776,14 +776,14 @@
     echo "</table>";
            
     echo "\n<br><b>Filetypes:</b> <br>";    
-    if ( count($toolFiletypes) > 0 ) {
+    if ( hihat_count($toolFiletypes) > 0 ) {
         echo '<table border="0"><tr><td style="width:'.$leftMed.'px;" class="left_stat">';
         arsort($toolFiletypes);    
         $foreachCounter = 0;
         foreach($toolFiletypes AS $key => $value ) {
             $foreachCounter++;
             echo $key." </td><td class=\"right_stat\">".$value."  </td><td class=\"percent_stat\">[".round($value/$totalToolsDownloaded*100, $accuracy)."%]  </td>\n";        
-            if ( count($toolFiletypes) > $foreachCounter )
+            if ( hihat_count($toolFiletypes) > $foreachCounter )
                 echo "</tr>\n<tr><td class=\"left_stat\">";
         }
     }

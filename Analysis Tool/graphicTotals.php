@@ -30,7 +30,7 @@ if (isset($_GET)) {
         array_push($ydata, abs((int)$value));
 }
 
-$arrayElements = count($ydata);
+$arrayElements = hihat_count($ydata);
 
 // avoid emtpy array
 if ( $arrayElements < 12 )

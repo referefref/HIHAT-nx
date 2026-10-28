@@ -147,7 +147,7 @@
         $_SESSION['ip'] = $mapper;
     }
                             
-    //echo $sql."<br> "; //count(mysql_num_row
+    //echo $sql."<br> "; //hihat_count(mysql_num_row
     
     
      // get results from DB for this ID

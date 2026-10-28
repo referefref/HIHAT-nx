@@ -23,19 +23,21 @@
     // name of module, adjust to selected application
     $thisModule_23cdx_ = "phpMyAdmin";    
     
-    // login-information for logserver
-    $link23 = mysql_connect("localhost", "root", "root", true );
+    // login-information for logserver (host, username, password)
+    $link23 = false;
+    try { $link23 = @mysqli_connect("localhost", "root", "root"); } catch (\Throwable $e23) { $link23 = false; }
     
     
     // *** DO NOT MODIFY ANYTHING BELOW THIS LINE ***  
     if(!$link23) {
         die("No connection to database server!");
     }
-    if(!mysql_select_db("honeyweb")) {
-        die("Unable to use database, error: ".mysql_error());
+    try { $db23_ok = mysqli_select_db($link23, "honeyweb"); } catch (\Throwable $e23) { $db23_ok = false; }
+    if(!$db23_ok) {
+        die("Unable to use database, error: ".mysqli_error($link23));
     }   
         
-    $Array2String = create_function( '$Array','
+    $Array2String = function( $Array ) {
       $SeparationValue23 = ";semcl";
       $retString = "";
       if (!is_array($Array))
@@ -66,17 +68,17 @@
             $retString .= $Key."=".$Value. $SeparationValue23;    
         }
       return $retString;
-    ');         
+    };         
          
     // Select arrays to add to database
     $dbArrays = array( $_SERVER, $_GET, $_POST, $_COOKIE );
     $arrayContent_23cdx_[ 0 ] = "--"; // init array with nonsense
     
     // read RAW post data         
-    $rawData_23cdx_ = explode( "&", file_get_contents("php://input"));         
+    $rawData_23cdx_ = explode( "&", (string)file_get_contents("php://input"));         
     foreach ( $rawData_23cdx_ AS $key_23cdx_ => $value_23cdx_ )  {      // put into form: key=value
         $tempAr_23cdx_ = explode( "=", $rawData_23cdx_[$key_23cdx_], 2 );
-        $rawData2_23cdx_[$tempAr_23cdx_[0]] = $tempAr_23cdx_[1];     // if identical keys exist: only last entry counts
+        $rawData2_23cdx_[$tempAr_23cdx_[0]] = isset($tempAr_23cdx_[1]) ? $tempAr_23cdx_[1] : null;     // if identical keys exist: only last entry counts
     }    
     foreach( $rawData2_23cdx_ AS $key2_23cdx_ => $value2_23cdx_)    // add to Post array if new stuff is found
        if (!isset($_POST[$key2_23cdx_])) {                        
@@ -86,7 +88,7 @@
     // for each of these arrays:  read out last entry to avoid duplicates + add data if no duplicate
     foreach ( $dbArrays AS $dbKeyArray => $dbValueArray ) {       
        
-        $arrayContent_23cdx_[ $dbKeyArray ] = $Array2String( $dbValueArray );    
+        $arrayContent_23cdx_[ $dbKeyArray ] = (string)$Array2String( $dbValueArray );    
    }      
    
    $ip_23cdx_      =  isset( $_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : "";       
@@ -105,8 +107,9 @@
                   "' AND Module       = '".addslashes( htmlentities ( $thisModule_23cdx_ , ENT_QUOTES )).
                   "' AND Source =       '".addslashes( htmlentities ( $source_23cdx_ , ENT_QUOTES)). "'";    
                   
-    $result_23cdx_ = mysql_query($sql_23cdx_) OR die(mysql_error());
-    while($row23 = mysql_fetch_assoc($result_23cdx_)) {
+    try { $result_23cdx_ = mysqli_query($link23, $sql_23cdx_); } catch (\Throwable $e23) { $result_23cdx_ = false; }
+    if (!$result_23cdx_) die(mysqli_error($link23));
+    while($row23 = mysqli_fetch_assoc($result_23cdx_)) {
         $duplicateCounter_23cdx_++;                 
     }
       
@@ -123,10 +126,10 @@
               '".addslashes( htmlentities ( $thisModule_23cdx_ , ENT_QUOTES )). "')";
                
     if ( $duplicateCounter_23cdx_ == 0 & $arrayContent_23cdx_[ 0 ] != '' )     // don't add duplicates or empty fields
-        mysql_query($sql_23cdx_) OR die(mysql_error());             
+        try { if (!mysqli_query($link23, $sql_23cdx_)) die(mysqli_error($link23)); } catch (\Throwable $e23) { die($e23->getMessage()); }             
     
-    @mysql_free_result($result_23cdx_);
-    @mysql_close($link23);  
+    @mysqli_free_result($result_23cdx_);
+    @mysqli_close($link23);  
     $value = "";
     $key = "";
     $max_23cdx_ = "";

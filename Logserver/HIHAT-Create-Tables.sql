@@ -5,18 +5,18 @@
 #DROP TABLE IF EXISTS `main_logs`;
 CREATE TABLE `main_logs` (
     `ID` int(11) NOT NULL AUTO_INCREMENT,
-    `attackerIP` VARCHAR(15) NOT NULL,
+    `attackerIP` VARCHAR(45) NOT NULL,
     `attackerBrowser` VARCHAR(600) NOT NULL,
     `Source` VARCHAR(600) NOT NULL,
     `Value_Server`  LONGTEXT NOT NULL,
     `Value_Get`  LONGTEXT NOT NULL,
     `Value_Post`  LONGTEXT NOT NULL,
     `Value_Cookie`  LONGTEXT NOT NULL,
-    `Creation` timestamp(14) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `Creation` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `Module` VARCHAR(600) NOT NULL,   
-    `download_checked` SMALLINT NOT NULL,
+    `download_checked` SMALLINT NOT NULL DEFAULT 0,
      PRIMARY KEY (`ID`)                                      
-) TYPE=MyISAM COMMENT='table containing log-data';
+) ENGINE=MyISAM COMMENT='table containing log-data';
 
 #DROP TABLE IF EXISTS `binary_tools`;
 CREATE TABLE binary_tools (
@@ -26,6 +26,6 @@ CREATE TABLE binary_tools (
      filename varchar(256) NOT NULL,
      filesize int(11) NOT NULL,
      filetype varchar(50) NOT NULL,
-    `Creation` timestamp(14) NOT NULL DEFAULT CURRENT_TIMESTAMP
+    `Creation` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
      #PRIMARY KEY (id_files)
-) TYPE=MyISAM COMMENT='automatically downloaded,malicious tools';
+) ENGINE=MyISAM COMMENT='automatically downloaded,malicious tools';

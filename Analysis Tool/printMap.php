@@ -109,7 +109,7 @@
             if ( is_array( $attackIDAr )) {
                 foreach( $attackIDAr as $attackIDKey => $attackIDValue ) {    // create detection-string
                     $attackIDString .= $attackIDValue; 
-                    if ( count($attackIDAr) - $attackIDKey > 1 )  // if not last entry: add comma
+                    if ( hihat_count($attackIDAr) - $attackIDKey > 1 )  // if not last entry: add comma
                         $attackIDString .= ", ";
                 }
             } else
